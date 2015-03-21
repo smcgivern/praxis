@@ -50,6 +50,16 @@ module Praxis
       self.instance_eval(&block) if block_given?
     end
 
+    def example(&block)
+      if block_given?
+        @example = block
+      elsif @example && (ok_response = self.responses[:ok])
+        media_type = ok_response.media_type
+
+        media_type.load(@example.call(media_type.example.dump)).dump
+      end
+    end
+
     def update_attribute(attribute, options, block)
       attribute.options.merge!(options)
       attribute.type.attributes(options, &block)
