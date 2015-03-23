@@ -186,6 +186,7 @@ module Praxis
           next if action.metadata[:doc_visibility] == :none
 
           generated_examples = {}
+          response_example = action.example
           if action.params
             generated_examples[:params] = dump_example_for( r.id, action.params )
           end
@@ -195,6 +196,7 @@ module Praxis
           action_description = resource_description[:actions].find{|a| a[:name] == action_name }
           action_description[:params][:example] = generated_examples[:params] if generated_examples[:params]
           action_description[:payload][:example] = generated_examples[:payload] if generated_examples[:payload]
+          action_description[:example] = response_example if response_example
         end
 
         File.open(filename, 'w') {|f| f.write(JSON.pretty_generate(resource_description))}
